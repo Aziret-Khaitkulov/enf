@@ -33,7 +33,6 @@ class Cart(models.Model):
             cart_item.save()
 
         return cart_item
-    
 
     def remove_item(self, item_id):
         try:
@@ -42,7 +41,6 @@ class Cart(models.Model):
             return True
         except CartItem.DoesNotExist:
             return False
-        
 
     def update_item_quantity(self, item_id, quantity):
         try:
@@ -55,28 +53,25 @@ class Cart(models.Model):
             return True
         except CartItem.DoesNotExist:
             return False
-        
 
     def clear(self):
         self.items.all().delete()
-    
+
 
 class CartItem(models.Model):
-    cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart, related_name='items',
+                             on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     product_size = models.ForeignKey(ProductSize, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     added_at = models.DateTimeField(auto_now_add=True)
 
-
     class Meta:
         unique_together = ('cart', 'product', 'product_size')
 
-    
     def __str__(self):
-        return f"{self.product.name} - ({self.product_size.size.name}) x {self.quantity}"
-    
+        return f"{self.product.name} - {self.product_size.size.name} x {self.quantity}"
 
     @property
     def total_price(self):
-        return Decimal(str(self.product.price) * self.quantity)
+        return Decimal(str(self.product.price)) * self.quantity
